@@ -1,0 +1,36 @@
+.input {
+  height: 64px;
+  padding-left: 16px;
+
+  border-style: solid;
+  border-width: 1px;
+  border-color: hsla(0, 0.00%, 100.00%, 1.00);
+  border-radius: 8px;
+
+  background-color: transparent;
+
+  outline-color: hsla(0, 0.00%, 100.00%, 1.00);
+  outline-offset: 0px;
+  outline-style: none;
+  outline-width: 0.5px;
+
+  font-family: Equals;
+  color: hsla(231.06382978723403, 0.00%, 100.00%, 1.00);
+  font-size: 16px;
+}
+
+.input:focus-visible {
+  color: hsla(231.06382978723403, 0.00%, 100.00%, 1.00);
+}
+
+.input:focus {
+  border-color: hsla(0, 0.00%, 100.00%, 1.00);
+}
+
+.input.dropdown {
+  width: 100%;
+  padding-left: 0px;
+  font-family: Equals;
+  color: hsla(231.06382978723403, 0.00%, 100.00%, 1.00);
+  font-size: 16px;
+}
