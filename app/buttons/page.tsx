@@ -6,6 +6,8 @@ export default function Buttons() {
     <div>
         <p>This is where all the buttons will be </p>
     <Button/>
+
+
     </div>
   )
 }
