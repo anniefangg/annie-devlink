@@ -44,6 +44,10 @@
   text-decoration: none;
 }
 
+.text-link:hover {
+  color: var(--eqMangoYellow06-fcb0798d);
+}
+
 .scenarios {
   display: flex;
   width: 100%;

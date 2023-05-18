@@ -66,3 +66,7 @@
   background-color: var(--em11-16b7c6a6);
   color: hsla(231.06382978723403, 0.00%, 100.00%, 1.00);
 }
+
+.em-dropdown-list-item:hover {
+  background-color: var(--charcoal-b796d7aa);
+}

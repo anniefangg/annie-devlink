@@ -1,7 +1,7 @@
 import * as React from "react";
 import * as Types from "./types";
 
-declare function RecipientAvatars(props: {
+declare function BulkPaymentWidget(props: {
   as?: React.ElementType;
-  moreRecipients?: Types.Devlink.RuntimeProps;
+  widgetTitle?: Types.Devlink.RuntimeProps;
 }): React.JSX.Element;

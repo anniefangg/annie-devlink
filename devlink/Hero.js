@@ -1,10 +1,8 @@
 import React from "react";
 import * as _Builtin from "./_Builtin";
-import { InputDropdown } from "./InputDropdown";
-import { CellDropdown } from "./CellDropdown";
 import { InputForm } from "./InputForm";
 import { DropdownForm } from "./DropdownForm";
-import { RecipientWidget } from "./RecipientWidget";
+import { BulkPaymentWidget } from "./BulkPaymentWidget";
 import * as _utils from "./utils";
 import _styles from "./Hero.module.css";
 
@@ -23,16 +21,6 @@ export function Hero({ as: _Component = _Builtin.Section }) {
                 "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla, ut commodo diam libero vitae erat. Aenean faucibus nibh et justo cursus id rutrum lorem imperdiet. Nunc ut sem vitae risus tristique posuere."
               }
             </_Builtin.Paragraph>
-            <_Builtin.Link
-              button={true}
-              options={{
-                href: "#",
-              }}
-            >
-              {"Button Text"}
-            </_Builtin.Link>
-            <InputDropdown />
-            <CellDropdown />
             <_Builtin.FormWrapper>
               <_Builtin.FormForm
                 className={_utils.cx(_styles, "form-2")}
@@ -75,7 +63,7 @@ export function Hero({ as: _Component = _Builtin.Section }) {
               height="auto"
               src="https://uploads-ssl.webflow.com/644c609e7a19510df3e143fb/644c609e7a1951bf23e14443_Group%201287.png"
             />
-            <RecipientWidget />
+            <BulkPaymentWidget />
           </_Builtin.Block>
         </_Builtin.Block>
       </_Builtin.Container>
