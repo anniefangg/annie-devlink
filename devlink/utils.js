@@ -1,9 +1,9 @@
 import * as React from "react";
-/*
+/**
  * The cx function takes a css module object and the name of the element classes.
  * It will extract the final class names from the object if the class doesn't exist
  * on the object it will use the original name
- * */
+ */
 export const cx = (style, ...classNames) =>
   cj(...classNames.map((c) => style[c] ?? c));
 /**
@@ -14,11 +14,37 @@ export const cj = (...classNames) => classNames.filter(Boolean).join(" ");
 const UNESCAPED_CHARS = /(\\b|\\f|\\r\\n|\\n|\\r|\\t|\\v)/gm;
 export const removeUnescaped = (value) =>
   decodeURIComponent(value).replace(UNESCAPED_CHARS, "");
+/**
+ * Regular expression to match CSS class selectors (i.e. starting with a '.').
+ */
+const CSS_CLASS = /\.-?[_a-zA-Z]+[_a-zA-Z0-9-]*/g;
+/**
+ * Regular expression to test for whitespace characters (i.e. spaces, tabs, line breaks) in a CSS style.
+ */
+const WHITE_SPACE = /\s+/g;
+/**
+ * Function to replace the CSS classes in a given selector with the actual CSS values
+ * using a given styles object (i.e. object with CSS class keys and CSS styles as values).
+ */
 export const replaceSelector = (selector, styles) => {
-  return selector
-    .split(".")
-    .map((c) => styles?.[c] ?? c)
-    .join(".");
+  return selector.replace(new RegExp(CSS_CLASS), (match) => {
+    // Get the corresponding CSS style for the current class selector by removing the leading '.'
+    const segment = styles[match.replace(".", "")];
+    // If no corresponding CSS style was found for the current class selector, return the original selector.
+    if (!segment) return match;
+    // If the CSS style for the current class selector has whitespace characters, create a compound selector with
+    // all the individual selectors wrapped in a ':is' pseudo-class.
+    if (new RegExp(WHITE_SPACE).test(segment)) {
+      const segmentSelector = segment
+        .split(WHITE_SPACE)
+        .map((w) => "." + w)
+        .join(",");
+      return `:is(${segmentSelector})`;
+    }
+    // If the CSS style for the current class selector does not have whitespace characters,
+    // return a new selector with the class selector replaced by its corresponding CSS style.
+    return `.${segment}`;
+  });
 };
 export function debounce(func, timeout = 0) {
   let timer;
@@ -144,3 +170,49 @@ export const KEY_CODES = {
   HOME: "Home",
   END: "End",
 };
+export function dispatchCustomEvent(element, eventName) {
+  element.dispatchEvent(
+    new CustomEvent(eventName, {
+      bubbles: true,
+      cancelable: true,
+    })
+  );
+}
+export function useClickOut(ref, action) {
+  React.useEffect(() => {
+    function handleClickOutside(event) {
+      if (ref.current?.contains(event.target)) return;
+      event.preventDefault();
+      action();
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [ref, action]);
+}
+export function extractElement(elements, type) {
+  let extracted;
+  // Use inner function to preserve scope so recursion is easier to read
+  function removeElementByType(elements) {
+    return elements.map((element) => {
+      if (!React.isValidElement(element)) {
+        return element;
+      }
+      if (element.type === type) {
+        // We found the element we want to extract
+        extracted = element;
+        // We don't include it in the returned array, essentially removing it from the tree
+        return null;
+      }
+      // Recursively process the children
+      const children = removeElementByType(
+        React.Children.toArray(element.props.children)
+      );
+      // Return a new element with the updated children
+      return React.cloneElement(element, element.props, ...children);
+    });
+  }
+  const tree = removeElementByType(elements);
+  return { extracted, tree };
+}

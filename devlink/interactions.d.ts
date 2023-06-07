@@ -11,7 +11,14 @@ declare type InteractionProviderProps = {
 export declare const InteractionsProvider: React.FC<InteractionProviderProps>;
 export declare const useInteractions: (
   data: IXData,
-  styles: CSSModules,
-  ...nodes: string[]
+  styles?: CSSModules | undefined
 ) => void;
+export declare function triggerIXEvent(
+  element: HTMLElement | null | undefined,
+  active: boolean
+): void;
+export declare function useIXEvent(
+  element: HTMLElement | null | undefined,
+  active: boolean
+): void;
 export {};

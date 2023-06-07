@@ -1,10 +1,8 @@
-.avatars {
-  display: flex;
-  justify-content: flex-start;
-  align-items: flex-start;
-  flex: 0 auto;
-  grid-column-gap: 4px;
-  grid-row-gap: 4px;
+.small-avatar {
+  flex-direction: row;
+  border-radius: 20px;
+  background-color: var(--charcoal-b796d7aa);
+  color: var(--em11-16b7c6a6);
 }
 
 .small-body-regular {

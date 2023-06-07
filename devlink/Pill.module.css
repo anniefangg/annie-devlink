@@ -24,7 +24,9 @@
 }
 
 .small-body-regular {
-  font-family: Equals, sans-serif;
+  margin-bottom: 0px;
+
+  font-family: Equals;
   color: rgba(247, 248, 252, 1);
   font-size: 10px;
   line-height: 18px;

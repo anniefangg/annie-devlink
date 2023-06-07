@@ -1,3 +1,5 @@
+"use client";
+
 export * as _Builtin from "./_Builtin";
 export * from "./interactions";
 export * from "./utils";
@@ -24,4 +26,5 @@ export * from "./SevenDayForecast";
 export * from "./SideNav";
 export * from "./Sidebar";
 export * from "./SmallAvatar";
+export * from "./SmallTextAvatar";
 export * from "./TopNav";

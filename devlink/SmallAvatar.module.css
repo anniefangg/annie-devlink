@@ -9,3 +9,10 @@
 
   object-fit: cover;
 }
+
+.small-avatar {
+  flex-direction: row;
+  border-radius: 20px;
+  background-color: var(--charcoal-b796d7aa);
+  color: var(--em11-16b7c6a6);
+}

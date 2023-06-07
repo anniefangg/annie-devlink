@@ -1,9 +1,14 @@
 import * as React from "react";
 import { EASING_FUNCTIONS } from "../utils";
 import { LinkProps, ContainerProps } from "./Basic";
+declare const BREAKPOINTS: {
+  medium: number;
+  small: number;
+  tiny: number;
+};
 declare type NavbarConfig = {
   animation: string;
-  collapse: string;
+  collapse: keyof typeof BREAKPOINTS;
   docHeight: boolean;
   duration: number;
   easing: keyof typeof EASING_FUNCTIONS;
@@ -14,11 +19,11 @@ export declare const NavbarContext: React.Context<
   NavbarConfig & {
     animDirect: -1 | 1;
     animOver: boolean;
-    getBodyHeight: () => number;
-    getOverlayHeight: () => number;
+    getBodyHeight: () => number | void;
+    getOverlayHeight: () => number | void;
     isOpen: boolean;
-    menu?: React.MutableRefObject<HTMLElement | null> | undefined;
-    root?: React.MutableRefObject<HTMLElement | null> | undefined;
+    menu: React.MutableRefObject<HTMLElement | null>;
+    root: React.MutableRefObject<HTMLElement | null>;
     toggleOpen: () => void;
     navbarMounted: boolean;
   }

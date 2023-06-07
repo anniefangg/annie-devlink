@@ -1,7 +1,8 @@
 import * as React from "react";
-import { cj, debounce, EASING_FUNCTIONS } from "../utils";
+import { triggerIXEvent } from "../interactions";
+import { cj, debounce, EASING_FUNCTIONS, useLayoutEffect } from "../utils";
 const tabsContext = React.createContext({
-  current: "Tab 1",
+  current: "",
   onTabClick: () => {},
   onLinkKeyDown: () => {},
 });
@@ -13,7 +14,7 @@ export function TabsWrapper({
   current: initialCurrent,
   ...props
 }) {
-  const [current, setCurrent] = React.useState(initialCurrent);
+  const [current, setCurrent] = React.useState("");
   const changeTab = React.useCallback(
     (next) => {
       const currentTab = document.querySelector(
@@ -37,10 +38,21 @@ export function TabsWrapper({
             easing: easingFn,
           });
         };
+      } else {
+        setCurrent(next);
       }
     },
     [current, easing, fadeIn, fadeOut]
   );
+  // Trigger first tab change manually
+  const firstRender = React.useRef(true);
+  useLayoutEffect(() => {
+    if (!firstRender.current) return;
+    firstRender.current = false;
+    setTimeout(() => {
+      changeTab(initialCurrent);
+    }, 1);
+  }, [changeTab, initialCurrent]);
   const onTabClick = debounce(changeTab);
   const onLinkKeyDown = debounce((event) => {
     event.preventDefault();
@@ -68,22 +80,31 @@ export function TabsWrapper({
   });
   return (
     <tabsContext.Provider value={{ current, onTabClick, onLinkKeyDown }}>
-      <div className={cj(className, "w-tabs")} {...props} />
+      <div {...props} className={cj(className, "w-tabs")} />
     </tabsContext.Provider>
   );
 }
 export function TabsMenu({ tag = "div", className = "", ...props }) {
   return React.createElement(tag, {
+    ...props,
     className: cj(className, "w-tab-menu"),
     role: "tablist",
-    ...props,
   });
 }
 export function TabsLink({ className = "", ...props }) {
   const { current, onTabClick, onLinkKeyDown } = React.useContext(tabsContext);
   const isCurrent = current === props["data-w-tab"];
+  const ref = React.useCallback(
+    (node) => {
+      if (!node) return;
+      triggerIXEvent(node, isCurrent);
+    },
+    [isCurrent]
+  );
   return (
     <a
+      {...props}
+      ref={ref}
       className={cj(
         className,
         "w-inline-block w-tab-link",
@@ -95,23 +116,22 @@ export function TabsLink({ className = "", ...props }) {
       tabIndex={isCurrent ? 0 : -1}
       aria-selected={isCurrent}
       aria-controls={props["data-w-tab"]}
-      {...props}
     />
   );
 }
 export function TabsContent({ tag = "div", className = "", ...props }) {
   return React.createElement(tag, {
-    className: cj(className, "w-tab-content"),
     ...props,
+    className: cj(className, "w-tab-content"),
   });
 }
 export function TabsPane({ tag = "div", className = "", ...props }) {
   const { current } = React.useContext(tabsContext);
   const isCurrent = current === props["data-w-tab"];
   return React.createElement(tag, {
+    ...props,
     className: cj(className, "w-tab-pane", isCurrent && "w--tab-active"),
     role: "tabpanel",
     "aria-labelledby": props["data-w-tab"],
-    ...props,
   });
 }

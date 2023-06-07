@@ -26,4 +26,5 @@ export * from "./SevenDayForecast";
 export * from "./SideNav";
 export * from "./Sidebar";
 export * from "./SmallAvatar";
+export * from "./SmallTextAvatar";
 export * from "./TopNav";

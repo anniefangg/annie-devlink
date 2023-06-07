@@ -1,24 +1,32 @@
 import * as React from "react";
-import { cj } from "../utils";
+import { useIXEvent } from "../interactions";
+import { cj, useClickOut } from "../utils";
 import { Link } from "./Basic";
 import { NavbarContext } from "./Navbar";
 const DropdownContext = React.createContext({
+  root: undefined,
   isOpen: false,
   toggleOpen: () => {},
 });
 export function DropdownWrapper(props) {
+  const root = React.useRef(null);
   const [isOpen, setIsOpen] = React.useState(false);
   const toggleOpen = () => setIsOpen((isOpen) => !isOpen);
+  const closeDropdown = React.useCallback(() => setIsOpen(false), [setIsOpen]);
+  useClickOut(root, closeDropdown);
+  useIXEvent(root.current, isOpen);
   return (
-    <DropdownContext.Provider value={{ isOpen, toggleOpen }}>
+    <DropdownContext.Provider value={{ root, isOpen, toggleOpen }}>
       <Dropdown {...props} />
     </DropdownContext.Provider>
   );
 }
 function Dropdown({ tag = "div", className = "", ...props }) {
+  const { root } = React.useContext(DropdownContext);
   const { isOpen: isNavbarOpen } = React.useContext(NavbarContext);
   return React.createElement(tag, {
     ...props,
+    ref: root,
     className: cj(
       className,
       "w-dropdown",

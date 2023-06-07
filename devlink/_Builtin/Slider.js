@@ -1,4 +1,5 @@
 import * as React from "react";
+import { triggerIXEvent } from "../interactions";
 import { EASING_FUNCTIONS, KEY_CODES, cj, debounce } from "../utils";
 const DEFAULT_SLIDER_CONFIG = {
   navSpacing: 3,
@@ -150,7 +151,7 @@ export function SliderMask({ className = "", children, ...props }) {
   const { resumeAutoplay, pauseAutoplay } = useAutoplay();
   React.useEffect(() => {
     setSlideAmount(React.Children.count(children));
-  }, []);
+  }, [children, setSlideAmount]);
   return (
     <div
       {...props}
@@ -243,21 +244,20 @@ export function SliderSlide({
       };
     }
     return base;
-  }, [
-    animation,
-    duration,
-    easing,
-    current,
-    previous,
-    isSlideActive,
-    isSlidePrevious,
-  ]);
+  }, [animation, duration, easing, current, isSlideActive, isSlidePrevious]);
+  const ref = React.useCallback(
+    (node) => {
+      triggerIXEvent(node, isSlideActive);
+    },
+    [isSlideActive]
+  );
   return React.createElement(tag, {
     ...props,
     className: cj(className, "w-slide"),
     style: { ...style, ...animationStyle },
     "aria-label": `${index + 1} of ${slideAmount}`,
     role: "group",
+    ref,
     "aria-hidden": !isSlideActive ? "true" : "false",
   });
 }

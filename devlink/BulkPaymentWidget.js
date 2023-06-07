@@ -7,6 +7,7 @@ import _styles from "./BulkPaymentWidget.module.css";
 export function BulkPaymentWidget({
   as: _Component = _Builtin.Block,
   widgetTitle = {},
+  bulkPaymentWidgetTitle = "",
 }) {
   return (
     <_Component className={_utils.cx(_styles, "widget")} tag="div">
@@ -14,9 +15,8 @@ export function BulkPaymentWidget({
         <_Builtin.Block
           className={_utils.cx(_styles, "body-medium-bold", "grey")}
           tag="div"
-          {...widgetTitle}
         >
-          {"Recent bulk payments"}
+          {bulkPaymentWidgetTitle}
         </_Builtin.Block>
         <_Builtin.Link
           className={_utils.cx(_styles, "text-link")}

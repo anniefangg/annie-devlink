@@ -74,10 +74,11 @@ export declare function SliderSlide({
     style: {};
     "aria-label": string;
     role: string;
+    ref: (node: any) => void;
     "aria-hidden": string;
     children?: React.ReactNode;
   },
-  Element
+  any
 >;
 declare type SliderArrowProps = React.PropsWithChildren<{
   className?: string;

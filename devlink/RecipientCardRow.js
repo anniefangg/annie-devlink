@@ -10,6 +10,8 @@ export function RecipientCardRow({
   as: _Component = _Builtin.Block,
   bulkPaymentRowHeader = {},
   bulkPaymentStatus = {},
+  bulkPaymentName,
+  dateCompletedOn = {},
 }) {
   return (
     <_Component className={_utils.cx(_styles, "card-row")} tag="div">
@@ -19,9 +21,8 @@ export function RecipientCardRow({
             <_Builtin.Block
               className={_utils.cx(_styles, "body-medium-bold")}
               tag="div"
-              {...bulkPaymentRowHeader}
             >
-              {"Bulk payment 23-06-2021"}
+              {bulkPaymentName ?? "Bulk payment 23-06-2021"}
             </_Builtin.Block>
             <Pill />
           </_Builtin.Block>
@@ -30,7 +31,9 @@ export function RecipientCardRow({
             tag="div"
             {...bulkPaymentStatus}
           >
-            {"10 payments completed on 23-06-2021"}
+            <_Builtin.Span>{"10 payments "}</_Builtin.Span>
+            {"completed on "}
+            <_Builtin.Span {...dateCompletedOn}>{"23-06-2021"}</_Builtin.Span>
           </_Builtin.Block>
         </_Builtin.Block>
         <_Builtin.Block

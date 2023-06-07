@@ -3,11 +3,17 @@ import {
   EASING_FUNCTIONS,
   cj,
   debounce,
+  extractElement,
   isServer,
   useLayoutEffect,
   useResizeObserver,
 } from "../utils";
 import { Link, Container } from "./Basic";
+const BREAKPOINTS = {
+  medium: 991,
+  small: 767,
+  tiny: 479,
+};
 export const NavbarContext = React.createContext({
   animDirect: 1,
   animOver: false,
@@ -17,12 +23,14 @@ export const NavbarContext = React.createContext({
   duration: 400,
   easing2: "ease",
   easing: "ease",
-  getBodyHeight: () => 0,
-  getOverlayHeight: () => 0,
+  getBodyHeight: () => {},
+  getOverlayHeight: () => {},
   isOpen: false,
   noScroll: false,
   toggleOpen: () => {},
   navbarMounted: false,
+  menu: undefined,
+  root: undefined,
 });
 function getAnimationKeyframes({ axis = "Y", start, end }) {
   const t = `translate${axis}`;
@@ -36,19 +44,20 @@ export function NavbarWrapper(props) {
   const animOver = /^over/.test(animation);
   const animDirect = /left$/.test(animation) ? -1 : 1;
   const getBodyHeight = React.useCallback(() => {
-    if (isServer) return 0;
+    if (isServer) return;
     return docHeight
       ? document.documentElement.scrollHeight
       : document.body.scrollHeight;
   }, [docHeight]);
   const getOverlayHeight = React.useCallback(() => {
-    if (isServer || !root.current) return 0;
-    let h = getBodyHeight();
+    if (isServer || !root.current) return;
+    let height = getBodyHeight();
+    if (!height) return;
     const style = getComputedStyle(root.current);
     if (!animOver && style.position !== "fixed") {
-      h -= root.current.offsetHeight;
+      height -= root.current.offsetHeight;
     }
-    return h;
+    return height;
   }, [animOver, getBodyHeight]);
   const getOffsetHeight = React.useCallback(() => {
     if (!root.current || !menu.current) return 0;
@@ -143,40 +152,27 @@ export function NavbarWrapper(props) {
  * */
 const maybeExtractChildMenu = (children, isOpen) => {
   if (!isOpen) return { childMenu: null, rest: children };
-  const childrenArray = React.Children.toArray(children);
-  const { childMenu, rest } = childrenArray.reduce(
-    (acc, child) => {
-      if (child.type === NavbarMenu) {
-        acc.childMenu = child;
-        return acc;
-      }
-      if (child.type === NavbarContainer) {
-        const { children: containerChildren, ...containerProps } = child.props;
-        const { childMenu, rest } = maybeExtractChildMenu(
-          containerChildren,
-          isOpen
-        );
-        acc.childMenu = childMenu;
-        acc.rest.push(
-          <NavbarContainer {...containerProps}>{rest}</NavbarContainer>
-        );
-        return acc;
-      }
-      acc.rest.push(child);
-      return acc;
-    },
-    { childMenu: null, rest: [] }
+  const { extracted, tree } = extractElement(
+    React.Children.toArray(children),
+    NavbarMenu
   );
-  return {
-    childMenu,
-    rest: <>{rest.map((e, i) => React.cloneElement(e, { key: i }))}</>,
-  };
+  return { childMenu: extracted, rest: tree };
 };
 function Navbar({ tag = "div", className = "", children, config, ...props }) {
-  const { root, isOpen } = React.useContext(NavbarContext);
+  const { root, collapse } = React.useContext(NavbarContext);
+  const [shouldExtractMenu, setShouldExtractMenu] = React.useState(true);
+  const extractMenuCallback = React.useCallback(
+    (entry) =>
+      setShouldExtractMenu(entry.contentRect.width <= BREAKPOINTS[collapse]),
+    [setShouldExtractMenu]
+  );
+  const bodyRef = React.useRef(
+    typeof document !== "undefined" ? document.body : null
+  );
+  useResizeObserver(bodyRef, extractMenuCallback);
   const { childMenu, rest } = React.useMemo(
-    () => maybeExtractChildMenu(children, isOpen),
-    [children, isOpen]
+    () => maybeExtractChildMenu(children, shouldExtractMenu),
+    [children, shouldExtractMenu]
   );
   return React.createElement(
     tag,
@@ -212,7 +208,7 @@ function NavbarOverlay({ children }) {
       style={{
         display: isOpen ? "block" : "none",
         height: getOverlayHeight(),
-        width: isOpen ? "100vw" : 0,
+        width: isOpen ? "100%" : 0,
       }}
       onClick={overlayToggleOpen}
     >
